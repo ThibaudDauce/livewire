@@ -35,9 +35,15 @@ export default function () {
                             store.emit(event, e)
                         })
                     } else if (channel_type == 'presence') {
-                        Echo.join(channel)[event_name](e => {
-                            store.emit(event, e)
-                        })
+                        if (Echo.join(channel)[event_name] === undefined) {
+                            Echo.join(channel).listen(event_name, e => {
+                                store.emit(event, e)
+                            })
+                        } else {
+                            Echo.join(channel)[event_name](e => {
+                                store.emit(event, e)
+                            })
+                        }
                     } else if (channel_type == 'notification') {
                         Echo.private(channel).notification(notification => {
                             store.emit(event, notification)
